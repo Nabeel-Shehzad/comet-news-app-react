@@ -1,6 +1,8 @@
-// API key for NewsAPI.org
-const API_KEY = '9e86b086579e4564ade2222bd30716ff';
-const BASE_URL = 'https://newsapi.org/v2';
+// Determine whether to use the local API or the proxy based on the environment
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE = isLocalhost 
+  ? 'https://newsapi.org/v2' 
+  : '/news/api-proxy.php'; // Updated path to include /news/ subdirectory
 
 /**
  * Get top headlines from NewsAPI
@@ -22,21 +24,35 @@ export const getTopHeadlines = async ({
       country,
       pageSize,
       page,
-      apiKey: API_KEY
     });
 
     if (category && category !== 'all') {
       params.append('category', category.toLowerCase());
     }
-
-    const response = await fetch(`${BASE_URL}/top-headlines?${params.toString()}`);
-    const data = await response.json();
-
-    if (data.status !== 'ok') {
-      throw new Error(data.message || 'Error fetching news');
+    
+    // Add endpoint parameter for the proxy and API key only for direct calls
+    if (isLocalhost) {
+      params.append('apiKey', '9e86b086579e4564ade2222bd30716ff');
+      const response = await fetch(`${API_BASE}/top-headlines?${params.toString()}`);
+      const data = await response.json();
+      
+      if (data.status !== 'ok') {
+        throw new Error(data.message || 'Error fetching news');
+      }
+      
+      return data;
+    } else {
+      // For the proxy, we need to specify the endpoint as a parameter
+      params.append('endpoint', 'top-headlines');
+      const response = await fetch(`${API_BASE}?${params.toString()}`);
+      const data = await response.json();
+      
+      if (data.status !== 'ok') {
+        throw new Error(data.message || 'Error fetching news');
+      }
+      
+      return data;
     }
-
-    return data;
   } catch (error) {
     console.error('Error fetching top headlines:', error);
     throw error;
@@ -67,17 +83,31 @@ export const searchNews = async ({
       sortBy,
       pageSize,
       page,
-      apiKey: API_KEY
     });
 
-    const response = await fetch(`${BASE_URL}/everything?${params.toString()}`);
-    const data = await response.json();
-
-    if (data.status !== 'ok') {
-      throw new Error(data.message || 'Error searching news');
+    // Add endpoint parameter for the proxy and API key only for direct calls
+    if (isLocalhost) {
+      params.append('apiKey', '9e86b086579e4564ade2222bd30716ff');
+      const response = await fetch(`${API_BASE}/everything?${params.toString()}`);
+      const data = await response.json();
+      
+      if (data.status !== 'ok') {
+        throw new Error(data.message || 'Error searching news');
+      }
+      
+      return data;
+    } else {
+      // For the proxy, we need to specify the endpoint as a parameter
+      params.append('endpoint', 'everything');
+      const response = await fetch(`${API_BASE}?${params.toString()}`);
+      const data = await response.json();
+      
+      if (data.status !== 'ok') {
+        throw new Error(data.message || 'Error searching news');
+      }
+      
+      return data;
     }
-
-    return data;
   } catch (error) {
     console.error('Error searching news:', error);
     throw error;

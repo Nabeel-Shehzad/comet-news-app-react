@@ -15,7 +15,7 @@ const ChatPage = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const navigate = useNavigate();
   const { isAuthenticated, isAdmin } = useAuth();
-  
+
   const categories = [
     { id: "all", name: "All" },
     { id: "trending", name: "Trending", icon: <TrendingUp size={14} /> },
@@ -39,17 +39,17 @@ const ChatPage = () => {
           orderBy('createdAt', 'desc')
         );
         const snapshot = await getDocs(chatRoomsQuery);
-        
+
         const rooms = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
           // Format timestamp for display
           timeAgo: doc.data().createdAt ? formatTimeAgo(doc.data().createdAt.toDate()) : 'Recently'
         }));
-        
+
         setChatRooms(rooms);
         setFilteredRooms(rooms);
-        
+
         // Calculate total participants
         const total = rooms.reduce((sum, room) => sum + (room.participants || 0), 0);
         setTotalUsers(total);
@@ -70,7 +70,7 @@ const ChatPage = () => {
     } else if (activeCategory === "trending") {
       setFilteredRooms(chatRooms.filter(room => room.isHot));
     } else {
-      setFilteredRooms(chatRooms.filter(room => 
+      setFilteredRooms(chatRooms.filter(room =>
         room.category?.toLowerCase() === activeCategory
       ));
     }
@@ -84,15 +84,15 @@ const ChatPage = () => {
       } else if (activeCategory === "trending") {
         setFilteredRooms(chatRooms.filter(room => room.isHot));
       } else {
-        setFilteredRooms(chatRooms.filter(room => 
+        setFilteredRooms(chatRooms.filter(room =>
           room.category?.toLowerCase() === activeCategory
         ));
       }
     } else {
       const query = searchQuery.toLowerCase().trim();
       setFilteredRooms(
-        chatRooms.filter(room => 
-          room.title.toLowerCase().includes(query) || 
+        chatRooms.filter(room =>
+          room.title.toLowerCase().includes(query) ||
           room.description.toLowerCase().includes(query)
         )
       );
@@ -102,22 +102,22 @@ const ChatPage = () => {
   // Format timestamp to "X minutes/hours/days ago" format
   const formatTimeAgo = (date) => {
     const seconds = Math.floor((new Date() - date) / 1000);
-    
+
     let interval = seconds / 31536000; // years
     if (interval > 1) return Math.floor(interval) + ' years ago';
-    
+
     interval = seconds / 2592000; // months
     if (interval > 1) return Math.floor(interval) + ' months ago';
-    
+
     interval = seconds / 86400; // days
     if (interval > 1) return Math.floor(interval) + ' days ago';
-    
+
     interval = seconds / 3600; // hours
     if (interval > 1) return Math.floor(interval) + ' hours ago';
-    
+
     interval = seconds / 60; // minutes
     if (interval > 1) return Math.floor(interval) + ' minutes ago';
-    
+
     return 'Just now';
   };
 
@@ -138,16 +138,16 @@ const ChatPage = () => {
           <MessageSquare size={24} className="text-primary" />
           <h1 className="text-2xl font-bold">Live Chatrooms</h1>
         </div>
-        <p className="mt-2 text-gray-400">Join live conversations about today's most important topics</p>
+        <p className="mt-2 text-muted">Join live conversations about today's most important topics</p>
       </div>
 
       {/* Stats */}
       <div className="flex items-center gap-6 mt-4">
-        <div className="flex items-center text-gray-300">
+        <div className="flex items-center text-muted">
           <Users size={18} className="mr-2" />
           <span className="font-medium">{totalUsers}</span> people online
         </div>
-        <div className="flex items-center text-gray-300">
+        <div className="flex items-center text-muted">
           <MessageSquare size={18} className="mr-2" />
           <span className="font-medium">{chatRooms.length}</span> active discussions
         </div>
@@ -155,26 +155,25 @@ const ChatPage = () => {
 
       {/* Search */}
       <div className="relative mt-6 mb-4">
-        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
         <input
           type="text"
           placeholder="Search discussions..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded-lg bg-gray-900 border border-gray-800 py-2 pl-10 pr-4 text-gray-300 placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-primary/30"
+          className="w-full rounded-lg bg-secondary border border-border py-2 pl-10 pr-4 text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-primary/30"
         />
       </div>
 
       {/* Categories */}
-      <div className="flex items-center space-x-1 overflow-x-auto mt-2 pb-2 scrollbar-hide border-b border-gray-800">
+      <div className="flex items-center space-x-1 overflow-x-auto mt-2 pb-2 scrollbar-hide border-b border-border">
         {categories.map((category) => (
           <button
             key={category.id}
-            className={`flex whitespace-nowrap items-center gap-1 rounded-md px-4 py-2 font-medium transition-colors ${
-              activeCategory === category.id
+            className={`flex whitespace-nowrap items-center gap-1 rounded-md px-4 py-2 font-medium transition-colors ${activeCategory === category.id
                 ? "bg-primary text-white"
-                : "text-gray-400 hover:bg-gray-800"
-            }`}
+                : "text-muted hover:bg-secondary"
+              }`}
             onClick={() => setActiveCategory(category.id)}
           >
             {category.icon && <span>{category.icon}</span>}
@@ -186,7 +185,7 @@ const ChatPage = () => {
       {loading ? (
         <div className="flex justify-center items-center py-20">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-          <span className="ml-2 text-gray-400">Loading discussions...</span>
+          <span className="ml-2 text-muted">Loading discussions...</span>
         </div>
       ) : (
         <>
@@ -197,12 +196,12 @@ const ChatPage = () => {
                 <TrendingUp size={20} className="text-primary" />
                 <h2 className="text-xl font-bold">Trending Discussions</h2>
               </div>
-              
+
               <div className="space-y-4">
                 {trendingRooms.map((discussion) => (
-                  <div 
-                    key={discussion.id} 
-                    className="block rounded-lg border border-gray-800 bg-gray-900 hover:border-primary/50 transition-all cursor-pointer"
+                  <div
+                    key={discussion.id}
+                    className="block rounded-lg border border-border bg-secondary hover:border-primary/50 transition-all cursor-pointer"
                     onClick={() => handleChatClick(discussion.id)}
                   >
                     <div className="p-4">
@@ -216,14 +215,14 @@ const ChatPage = () => {
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center text-xs text-gray-400">
+                        <div className="flex items-center text-xs text-muted">
                           <Users size={14} className="mr-1" />
                           <span>{discussion.participants || 0}</span>
                           <Clock size={14} className="ml-3 mr-1" />
                           <span>{discussion.timeAgo}</span>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-400">{discussion.description}</p>
+                      <p className="text-sm text-muted">{discussion.description}</p>
                     </div>
                   </div>
                 ))}
@@ -238,12 +237,12 @@ const ChatPage = () => {
                 <MessageSquare size={20} className="text-primary" />
                 <h2 className="text-xl font-bold">Discussions</h2>
               </div>
-              
+
               <div className="space-y-4">
                 {otherRooms.map((discussion) => (
-                  <div 
-                    key={discussion.id} 
-                    className="block rounded-lg border border-gray-800 bg-gray-900 hover:border-primary/50 transition-all cursor-pointer"
+                  <div
+                    key={discussion.id}
+                    className="block rounded-lg border border-border bg-secondary hover:border-primary/50 transition-all cursor-pointer"
                     onClick={() => handleChatClick(discussion.id)}
                   >
                     <div className="p-4">
@@ -254,14 +253,14 @@ const ChatPage = () => {
                             {discussion.category}
                           </span>
                         </div>
-                        <div className="flex items-center text-xs text-gray-400">
+                        <div className="flex items-center text-xs text-muted">
                           <Users size={14} className="mr-1" />
                           <span>{discussion.participants || 0}</span>
                           <Clock size={14} className="ml-3 mr-1" />
                           <span>{discussion.timeAgo}</span>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-400">{discussion.description}</p>
+                      <p className="text-sm text-muted">{discussion.description}</p>
                     </div>
                   </div>
                 ))}
@@ -271,26 +270,26 @@ const ChatPage = () => {
 
           {filteredRooms.length === 0 && (
             <div className="text-center py-16">
-              <MessageSquare size={40} className="mx-auto text-gray-600 mb-4" />
+              <MessageSquare size={40} className="mx-auto text-muted mb-4" />
               <h3 className="text-xl font-medium mb-2">No discussions found</h3>
-              <p className="text-gray-400">
-                {searchQuery 
-                  ? "Try a different search term" 
+              <p className="text-muted">
+                {searchQuery
+                  ? "Try a different search term"
                   : "There are no chat rooms in this category yet"}
               </p>
             </div>
           )}
         </>
       )}
-      
+
       {/* Login/Admin CTA at bottom */}
       <div className="mt-8 pb-6 flex flex-col sm:flex-row gap-2">
         {!isAuthenticated ? (
           <Button
             variant="outline"
-            className="w-full justify-center border-gray-800 py-2 text-gray-300 hover:bg-gray-900"
+            className="w-full justify-center border-border py-2 text-foreground hover:bg-secondary"
             leftIcon={<MessageSquare size={16} />}
-            onClick={() => window.location.href="/login"}
+            onClick={() => window.location.href = "/login"}
           >
             Login to Join Discussions
           </Button>

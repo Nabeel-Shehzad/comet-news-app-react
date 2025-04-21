@@ -20,7 +20,7 @@ const ChatRoomPage = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const [chatMessages, setChatMessages] = useState([
     {
       id: "welcome",
@@ -29,10 +29,10 @@ const ChatRoomPage = () => {
       time: ""
     }
   ]);
-  
+
   const [onlineUsers, setOnlineUsers] = useState([]);
   const messagesEndRef = useRef(null);
-  
+
   // Fetch chat room details from Firestore
   useEffect(() => {
     const fetchChatRoom = async () => {
@@ -40,7 +40,7 @@ const ChatRoomPage = () => {
         setLoading(true);
         const chatDocRef = doc(db, "chatRooms", chatId);
         const chatSnapshot = await getDoc(chatDocRef);
-        
+
         if (chatSnapshot.exists()) {
           const chatData = chatSnapshot.data();
           setTopic({
@@ -68,18 +68,18 @@ const ChatRoomPage = () => {
   // Set user presence when entering/leaving chat room
   useEffect(() => {
     if (!chatId || !currentUser) return;
-    
+
     const userStatusRef = ref(rtdb, `chatRooms/${chatId}/presence/${currentUser.uid}`);
-    
+
     // Add user to presence list when they join
     const userPresenceData = {
       name: userProfile?.name || currentUser.email || 'Anonymous',
       role: userProfile?.role || 'user',
       lastSeen: rtdbServerTimestamp()
     };
-    
+
     set(userStatusRef, userPresenceData);
-    
+
     // Remove user from presence list when they leave
     return () => {
       set(userStatusRef, null);
@@ -89,23 +89,23 @@ const ChatRoomPage = () => {
   // Subscribe to online users
   useEffect(() => {
     if (!chatId) return;
-    
+
     const presenceRef = ref(rtdb, `chatRooms/${chatId}/presence`);
-    
+
     const unsubscribe = onValue(presenceRef, (snapshot) => {
       const presenceData = snapshot.val() || {};
       const users = Object.entries(presenceData).map(([uid, data]) => ({
         uid,
         ...data
       }));
-      
+
       setOnlineUsers(users);
       setTopic(prev => ({
         ...prev,
         onlineUsers: users.length
       }));
     });
-    
+
     return () => unsubscribe();
   }, [chatId]);
 
@@ -116,19 +116,20 @@ const ChatRoomPage = () => {
     // Create a query for the last 100 messages, ordered by timestamp
     const messagesRef = ref(rtdb, `chatRooms/${chatId}/messages`);
     const messagesQuery = query(messagesRef, orderByChild('timestamp'), limitToLast(100));
-    
+
     const unsubscribe = onValue(messagesQuery, (snapshot) => {
       const messagesData = snapshot.val() || {};
-      
+
       const messages = Object.entries(messagesData).map(([key, data]) => {
         return {
           id: key,
           user: data.userName || 'Anonymous',
           content: data.text,
-          time: data.timestamp ? new Date(data.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '',
+          time: data.timestamp ? new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
           role: data.userRole,
           isYou: currentUser && data.userId === currentUser.uid,
-          system: data.system
+          system: data.system,
+          timestamp: data.timestamp // Add the timestamp for sorting
         };
       }).sort((a, b) => {
         // Ensure messages are sorted by timestamp even if Firebase doesn't return them in order
@@ -136,7 +137,7 @@ const ChatRoomPage = () => {
         const timeB = b.timestamp || 0;
         return timeA - timeB;
       });
-      
+
       setChatMessages([
         {
           id: "welcome",
@@ -150,22 +151,22 @@ const ChatRoomPage = () => {
 
     return () => unsubscribe();
   }, [chatId, currentUser]);
-  
+
   // Auto-scroll to bottom whenever messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
-  
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    
+
     if (!message.trim() || !currentUser) return;
-    
+
     try {
       // Add message to Realtime Database
       const messagesRef = ref(rtdb, `chatRooms/${chatId}/messages`);
       const newMessageRef = push(messagesRef);
-      
+
       await set(newMessageRef, {
         text: message,
         userId: currentUser.uid,
@@ -174,19 +175,19 @@ const ChatRoomPage = () => {
         timestamp: Date.now(),
         isAdmin: isAdmin || false
       });
-      
+
       setMessage("");
     } catch (err) {
       console.error("Error sending message:", err);
       setError("Failed to send message");
     }
   };
-  
+
   // Function to get initial for avatar
   const getInitial = (name) => {
     return (name || 'A').charAt(0).toUpperCase();
   };
-  
+
   // Handle fullscreen toggle
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -230,7 +231,7 @@ const ChatRoomPage = () => {
       document.removeEventListener("MSFullscreenChange", handleFullScreenChange);
     };
   }, []);
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -250,53 +251,53 @@ const ChatRoomPage = () => {
       </div>
     );
   }
-  
+
   return (
     <div ref={chatContainerRef} className="h-full w-full flex flex-col">
       {/* Chat Header */}
-      <div className="sticky top-0 z-10 border-b border-gray-800 bg-gray-900 p-4">
+      <div className="sticky top-0 z-10 border-b border-border bg-card p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Link to="/chat" className="rounded-full p-2 hover:bg-gray-800">
+            <Link to="/chat" className="rounded-full p-2 hover:bg-secondary">
               <ArrowLeft size={20} />
             </Link>
             <div>
               <h1 className="text-lg font-semibold">{topic.title}</h1>
-              <div className="flex items-center text-xs text-gray-400">
+              <div className="flex items-center text-xs text-muted">
                 <Users size={14} className="mr-1" />
                 <span>{topic.onlineUsers} online</span>
               </div>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-3">
-            <button className="rounded-full p-2 hover:bg-gray-800">
+            <button className="rounded-full p-2 hover:bg-secondary">
               <Volume2 size={18} />
             </button>
-            <button 
-              className="rounded-full p-2 hover:bg-gray-800"
+            <button
+              className="rounded-full p-2 hover:bg-secondary"
               onClick={toggleFullScreen}
               aria-label={isFullScreen ? "Exit full screen" : "Enter full screen"}
               title={isFullScreen ? "Exit full screen" : "Enter full screen"}
             >
               {isFullScreen ? <Minimize size={18} /> : <Maximize size={18} />}
             </button>
-            <button className="rounded-full p-2 hover:bg-gray-800">
+            <button className="rounded-full p-2 hover:bg-secondary">
               <MoreVertical size={18} />
             </button>
           </div>
         </div>
       </div>
-      
+
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-4" style={{ backgroundColor: "#0a0a0a" }}>
+      <div className="flex-1 overflow-y-auto p-4 bg-background">
         <div className="mx-auto max-w-3xl">
           {/* Chat Messages */}
           {chatMessages.map((msg) => (
             <div key={msg.id} className="mb-4">
               {msg.system ? (
                 <div className="my-2 flex justify-center">
-                  <div className="rounded-full bg-gray-800 px-4 py-1 text-xs text-gray-300">
+                  <div className="rounded-full bg-secondary px-4 py-1 text-xs text-muted">
                     {msg.content}
                   </div>
                 </div>
@@ -305,46 +306,46 @@ const ChatRoomPage = () => {
                 <div className="flex items-start justify-end">
                   <div className="flex-1 text-right">
                     <div className="flex items-center justify-end">
-                      <span className="font-medium">{msg.user}</span>
+                      <span className="font-medium text-foreground">{msg.user}</span>
                       {isAdmin && (
-                        <span className="ml-2 rounded px-2 py-0.5 text-xs font-semibold bg-purple-900 text-purple-100">
+                        <span className="ml-2 rounded px-2 py-0.5 text-xs font-semibold bg-purple-700 dark:bg-purple-900 text-purple-100">
                           ADMIN
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 rounded-lg bg-primary p-3 text-sm text-white inline-block">
+                    <div className="mt-1 rounded-lg bg-primary p-3 text-sm text-primary-foreground inline-block">
                       {msg.content}
                     </div>
-                    <div className="mt-1 text-xs text-gray-500">{msg.time}</div>
+                    <div className="mt-1 text-xs text-muted">{msg.time}</div>
                   </div>
-                  <div className="ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+                  <div className="ml-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
                     {getInitial(msg.user)}
                   </div>
                 </div>
               ) : (
                 // Other user messages on the left side
                 <div className="flex items-start">
-                  <div className="mr-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gray-700 text-sm font-semibold">
+                  <div className="mr-3 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-secondary-foreground">
                     {getInitial(msg.user)}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center">
-                      <span className="font-medium">{msg.user}</span>
+                      <span className="font-medium text-foreground">{msg.user}</span>
                       {msg.role && (msg.role === 'admin' || msg.isAdmin) && (
-                        <span className="ml-2 rounded px-2 py-0.5 text-xs font-semibold bg-purple-900 text-purple-100">
+                        <span className="ml-2 rounded px-2 py-0.5 text-xs font-semibold bg-purple-700 dark:bg-purple-900 text-purple-100">
                           ADMIN
                         </span>
                       )}
                       {msg.role && msg.role === 'moderator' && (
-                        <span className="ml-2 rounded px-2 py-0.5 text-xs font-semibold bg-green-900 text-green-100">
+                        <span className="ml-2 rounded px-2 py-0.5 text-xs font-semibold bg-green-700 dark:bg-green-900 text-green-100">
                           MOD
                         </span>
                       )}
                     </div>
-                    <div className="mt-1 rounded-lg bg-gray-800 p-3 text-sm">
+                    <div className="mt-1 rounded-lg bg-secondary p-3 text-sm text-foreground">
                       {msg.content}
                     </div>
-                    <div className="mt-1 text-xs text-gray-500">{msg.time}</div>
+                    <div className="mt-1 text-xs text-muted">{msg.time}</div>
                   </div>
                 </div>
               )}
@@ -353,9 +354,9 @@ const ChatRoomPage = () => {
           <div ref={messagesEndRef}></div>
         </div>
       </div>
-      
+
       {/* Chat Input */}
-      <div className="border-t border-gray-800 bg-gray-900 p-4">
+      <div className="border-t border-border bg-card p-4">
         <form onSubmit={handleSendMessage} className="mx-auto max-w-3xl">
           <div className="flex items-center gap-2">
             <input
@@ -363,7 +364,7 @@ const ChatRoomPage = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder={currentUser ? "Type a message..." : "Sign in to join the conversation"}
-              className="flex-1 rounded-lg bg-gray-800 border border-gray-700 px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-primary/50"
+              className="flex-1 rounded-lg bg-secondary border border-border px-4 py-3 text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
               disabled={!currentUser}
             />
             <Button

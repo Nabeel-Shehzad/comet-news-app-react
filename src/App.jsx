@@ -12,21 +12,25 @@ import './App.css';
 // Protected route component for admin-only access
 const AdminRoute = ({ children }) => {
   const { isAuthenticated, isAdmin, loading } = useAuth();
-  
+
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
-  
+
   if (!isAuthenticated || !isAdmin) {
     return <Navigate to="/" replace />;
   }
-  
+
   return children;
 };
 
 function AppRoutes() {
+  // Determine the base URL based on the environment
+  // In production, this will be '/news', in development it will be '/'
+  const basename = import.meta.env.PROD ? '/news' : '';
+
   return (
-    <Router>
+    <Router basename={basename}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
@@ -34,13 +38,13 @@ function AppRoutes() {
           <Route path="/chat/:chatId" element={<ChatRoomPage />} />
           <Route path="/article/:articleId" element={<ArticlePage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route 
-            path="/admin" 
+          <Route
+            path="/admin"
             element={
               <AdminRoute>
                 <AdminDashboard />
               </AdminRoute>
-            } 
+            }
           />
         </Route>
       </Routes>

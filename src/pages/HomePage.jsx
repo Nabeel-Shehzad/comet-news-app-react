@@ -93,8 +93,8 @@ const HomePage = () => {
     let label = article.source?.name || "News";
 
     // Check content for potential categorization
-    if (article.title?.toLowerCase().includes("breaking") || 
-        (article.description?.toLowerCase().includes("breaking"))) {
+    if (article.title?.toLowerCase().includes("breaking") ||
+      (article.description?.toLowerCase().includes("breaking"))) {
       color = "bg-red-500";
       label = "BREAKING NEWS";
     } else if (selectedCategory !== 'all') {
@@ -135,7 +135,7 @@ const HomePage = () => {
   const handleReadMore = (article, index) => {
     // Navigate to the article page and pass the full article data via navigation state
     const articleId = index === -1 ? 'featured' : index;
-    navigate(`/article/${articleId}`, { 
+    navigate(`/article/${articleId}`, {
       state: { article }
     });
   };
@@ -151,25 +151,25 @@ const HomePage = () => {
         </div>
         <h1 className="text-3xl font-bold">Comet News</h1>
       </div>
-      
-      <p className="text-[hsl(var(--muted-foreground))]">Stay updated with the latest news across all categories</p>
-      
+
+      <p className="text-muted">Stay updated with the latest news across all categories</p>
+
       {loading && !featuredArticle ? (
         <div className="flex justify-center py-20">
           <Loader size="xl" />
         </div>
       ) : error ? (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4">
-          <p className="text-red-700">{error}</p>
+        <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4">
+          <p className="text-red-700 dark:text-red-400">{error}</p>
         </div>
       ) : (
         <>
           {/* Featured Article */}
           {featuredArticle && (
-            <div className="relative mt-8 overflow-hidden rounded-lg border border-[hsl(var(--border))]">
-              <img 
-                src={featuredArticle.urlToImage || DEFAULT_IMAGE} 
-                alt={featuredArticle.title} 
+            <div className="relative mt-8 overflow-hidden rounded-lg border border-border">
+              <img
+                src={featuredArticle.urlToImage || DEFAULT_IMAGE}
+                alt={featuredArticle.title}
                 className="h-64 w-full object-cover sm:h-72 md:h-80 lg:h-96"
                 onError={(e) => { e.target.src = DEFAULT_IMAGE }}
               />
@@ -198,8 +198,8 @@ const HomePage = () => {
                     <span>•</span>
                     <span>{formatPublishedAt(featuredArticle.publishedAt)}</span>
                   </div>
-                  <Button 
-                    variant="destructive" 
+                  <Button
+                    variant="destructive"
                     size="md"
                     onClick={() => handleReadMore(featuredArticle, -1)}
                   >
@@ -209,18 +209,17 @@ const HomePage = () => {
               </div>
             </div>
           )}
-          
+
           {/* Category Filters */}
           <div className="mt-8">
             <div className="flex items-center space-x-2 overflow-x-auto pb-4 scrollbar-hide">
               {categories.map((category) => (
                 <button
                   key={category.name}
-                  className={`flex whitespace-nowrap items-center gap-1 rounded-md px-4 py-2 font-medium ${
-                    selectedCategory === category.name
-                      ? "bg-[hsl(var(--secondary))]"
-                      : "text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]"
-                  }`}
+                  className={`flex whitespace-nowrap items-center gap-1 rounded-md px-4 py-2 font-medium transition-colors ${selectedCategory === category.name
+                      ? "bg-secondary text-foreground"
+                      : "text-muted hover:bg-secondary/50 hover:text-foreground"
+                    }`}
                   onClick={() => setSelectedCategory(category.name)}
                 >
                   {category.icon}
@@ -229,7 +228,7 @@ const HomePage = () => {
               ))}
             </div>
           </div>
-          
+
           {/* News Articles List */}
           {loading && articles.length === 0 ? (
             <div className="flex justify-center py-20">
@@ -241,38 +240,38 @@ const HomePage = () => {
                 {articles.map((article, index) => {
                   const badge = getCategoryBadge(article);
                   return (
-                    <div 
-                      key={`${article.title}-${index}`} 
-                      className="group flex flex-col overflow-hidden rounded-lg border border-[hsl(var(--border))] hover:border-primary/30 transition-all sm:flex-row"
+                    <div
+                      key={`${article.title}-${index}`}
+                      className="group flex flex-col overflow-hidden rounded-lg border border-border hover:border-primary/30 transition-all sm:flex-row"
                     >
                       <div className="relative h-48 w-full sm:h-auto sm:w-48 sm:min-w-48">
                         <span className={`absolute left-0 top-0 z-10 rounded-br ${badge.color} px-2 py-1 text-xs font-bold text-white`}>
                           {badge.label}
                         </span>
-                        <img 
-                          src={article.urlToImage || DEFAULT_IMAGE} 
-                          alt={article.title} 
+                        <img
+                          src={article.urlToImage || DEFAULT_IMAGE}
+                          alt={article.title}
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                           onError={(e) => { e.target.src = DEFAULT_IMAGE }}
                         />
                       </div>
                       <div className="flex flex-1 flex-col justify-between p-4">
                         <div>
-                          <div className="flex items-center text-sm text-[hsl(var(--muted-foreground))]">
+                          <div className="flex items-center text-sm text-muted">
                             <span>{article.source?.name || 'News Source'}</span>
                             <span className="mx-2">•</span>
                             <span>{formatPublishedAt(article.publishedAt)}</span>
                           </div>
-                          <h3 className="mt-2 text-xl font-semibold group-hover:text-primary transition-colors">
+                          <h3 className="mt-2 text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
                             {article.title}
                           </h3>
-                          <p className="mt-2 text-[hsl(var(--muted-foreground))]">
+                          <p className="mt-2 text-muted">
                             {article.description || 'No description available'}
                           </p>
                         </div>
                         <div className="flex justify-end">
-                          <Button 
-                            variant="secondary" 
+                          <Button
+                            variant="secondary"
                             size="sm"
                             onClick={() => handleReadMore(article, index)}
                           >
@@ -289,8 +288,8 @@ const HomePage = () => {
               {articles.length > 0 && (
                 <div className="mt-8 flex justify-center">
                   {hasMore ? (
-                    <Button 
-                      variant="primary" 
+                    <Button
+                      variant="primary"
                       size="md"
                       className="group relative overflow-hidden"
                       isLoading={loadingMore}
@@ -298,14 +297,14 @@ const HomePage = () => {
                       onClick={loadMoreNews}
                       rightIcon={!loadingMore && (
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       )}
                     >
                       Load More News
                     </Button>
                   ) : (
-                    <p className="text-[hsl(var(--muted-foreground))]">
+                    <p className="text-muted">
                       No more articles to load
                     </p>
                   )}

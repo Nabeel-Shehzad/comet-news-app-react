@@ -7,4 +7,6 @@ export default defineConfig({
   css: {
     devSourcemap: true,
   },
+  // Base path for assets in production - must match your subdirectory
+  base: '/news/',
 })
