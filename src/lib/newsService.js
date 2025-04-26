@@ -2,7 +2,7 @@
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const API_BASE = isLocalhost 
   ? 'https://newsapi.org/v2' 
-  : '/news/api-proxy.php'; // Updated path to include /news/ subdirectory
+  : '/news/api-proxy.php'; // Path for production at the /news/ subdirectory
 
 /**
  * Get top headlines from NewsAPI

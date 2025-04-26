@@ -25,9 +25,10 @@ const AdminRoute = ({ children }) => {
 };
 
 function AppRoutes() {
-  // Determine the base URL based on the environment
-  // In production, this will be '/news', in development it will be '/'
-  const basename = import.meta.env.PROD ? '/news' : '';
+  // More reliable check for development environment
+  const isDevelopment = window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1';
+  const basename = isDevelopment ? '' : '/news';
 
   return (
     <Router basename={basename}>
