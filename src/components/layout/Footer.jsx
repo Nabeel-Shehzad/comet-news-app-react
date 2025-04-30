@@ -20,36 +20,33 @@ const Footer = () => {
               Delivering the latest and most relevant news from around the globe, 24/7.
             </p>
           </div>
-          
+
           <div className="mt-8 sm:mt-0">
             <h3 className="text-lg font-semibold">Categories</h3>
             <ul className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-1">
               <li>
-                <Link to="/" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Breaking News</Link>
+                <Link to="/?category=breaking" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Breaking News</Link>
               </li>
               <li>
-                <Link to="/" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">World</Link>
+                <Link to="/?category=business" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Business</Link>
               </li>
               <li>
-                <Link to="/" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Business</Link>
+                <Link to="/?category=technology" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Technology</Link>
               </li>
               <li>
-                <Link to="/" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Technology</Link>
+                <Link to="/?category=health" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Health</Link>
               </li>
               <li>
-                <Link to="/" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Entertainment</Link>
+                <Link to="/?category=entertainment" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Entertainment</Link>
               </li>
             </ul>
           </div>
-          
+
           <div className="mt-8 md:mt-0">
             <h3 className="text-lg font-semibold">Company</h3>
             <ul className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-1">
               <li>
                 <Link to="/about" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">About Us</Link>
-              </li>
-              <li>
-                <Link to="/careers" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Careers</Link>
               </li>
               <li>
                 <Link to="/contact" className="text-sm text-[hsl(var(--muted-foreground))] transition-colors hover:text-foreground">Contact</Link>
@@ -62,7 +59,7 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-          
+
           <div className="mt-8 lg:mt-0">
             <h3 className="text-lg font-semibold">Connect with us</h3>
             <div className="mt-4 flex space-x-4">
@@ -79,7 +76,7 @@ const Footer = () => {
                 <Linkedin size={20} />
               </a>
             </div>
-            
+
             <div className="mt-6">
               <h4 className="text-sm font-medium">Subscribe to our newsletter</h4>
               <div className="mt-2 flex max-w-sm">
@@ -95,7 +92,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="mt-8 border-t border-[hsl(var(--border))] pt-8 text-center">
           <p className="text-sm text-[hsl(var(--muted-foreground))]">
             © {new Date().getFullYear()} Comet News. All rights reserved.

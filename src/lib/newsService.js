@@ -1,8 +1,8 @@
 // Determine whether to use the local API or the proxy based on the environment
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_BASE = isLocalhost 
-  ? 'https://newsapi.org/v2' 
-  : '/news/api-proxy.php'; // Path for production at the /news/ subdirectory
+
+// Use PHP proxy on production, direct NewsAPI on local
+const API_PROXY = '/api-proxy.php';
 
 /**
  * Get top headlines from NewsAPI
@@ -23,17 +23,17 @@ export const getTopHeadlines = async ({
     const params = new URLSearchParams({
       country,
       pageSize,
-      page,
+      page
     });
 
     if (category && category !== 'all') {
       params.append('category', category.toLowerCase());
     }
     
-    // Add endpoint parameter for the proxy and API key only for direct calls
     if (isLocalhost) {
+      // For local development, call NewsAPI directly
       params.append('apiKey', '9e86b086579e4564ade2222bd30716ff');
-      const response = await fetch(`${API_BASE}/top-headlines?${params.toString()}`);
+      const response = await fetch(`https://newsapi.org/v2/top-headlines?${params.toString()}`);
       const data = await response.json();
       
       if (data.status !== 'ok') {
@@ -42,9 +42,9 @@ export const getTopHeadlines = async ({
       
       return data;
     } else {
-      // For the proxy, we need to specify the endpoint as a parameter
+      // For production, use the PHP proxy
       params.append('endpoint', 'top-headlines');
-      const response = await fetch(`${API_BASE}?${params.toString()}`);
+      const response = await fetch(`${API_PROXY}?${params.toString()}`);
       const data = await response.json();
       
       if (data.status !== 'ok') {
@@ -82,13 +82,13 @@ export const searchNews = async ({
       language,
       sortBy,
       pageSize,
-      page,
+      page
     });
 
-    // Add endpoint parameter for the proxy and API key only for direct calls
     if (isLocalhost) {
+      // For local development, call NewsAPI directly
       params.append('apiKey', '9e86b086579e4564ade2222bd30716ff');
-      const response = await fetch(`${API_BASE}/everything?${params.toString()}`);
+      const response = await fetch(`https://newsapi.org/v2/everything?${params.toString()}`);
       const data = await response.json();
       
       if (data.status !== 'ok') {
@@ -97,9 +97,9 @@ export const searchNews = async ({
       
       return data;
     } else {
-      // For the proxy, we need to specify the endpoint as a parameter
+      // For production, use the PHP proxy
       params.append('endpoint', 'everything');
-      const response = await fetch(`${API_BASE}?${params.toString()}`);
+      const response = await fetch(`${API_PROXY}?${params.toString()}`);
       const data = await response.json();
       
       if (data.status !== 'ok') {
@@ -114,11 +114,7 @@ export const searchNews = async ({
   }
 };
 
-/**
- * Format the published date to a more readable format
- * @param {string} dateString - ISO date string
- * @returns {string} - Formatted date string
- */
+// Format published date function remains unchanged
 export const formatPublishedAt = (dateString) => {
   const now = new Date();
   const published = new Date(dateString);

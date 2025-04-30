@@ -5,6 +5,10 @@ import ChatPage from './pages/ChatPage';
 import ChatRoomPage from './pages/ChatRoomPage';
 import LoginPage from './pages/LoginPage';
 import ArticlePage from './pages/ArticlePage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
 import AdminDashboard from './pages/AdminDashboard';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
@@ -25,10 +29,8 @@ const AdminRoute = ({ children }) => {
 };
 
 function AppRoutes() {
-  // More reliable check for development environment
-  const isDevelopment = window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1';
-  const basename = isDevelopment ? '' : '/news';
+  // Since we're deploying to cometnews.ai, we don't need a basename
+  const basename = '';
 
   return (
     <Router basename={basename}>
@@ -39,6 +41,10 @@ function AppRoutes() {
           <Route path="/chat/:chatId" element={<ChatRoomPage />} />
           <Route path="/article/:articleId" element={<ArticlePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
           <Route
             path="/admin"
             element={

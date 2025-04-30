@@ -1,6 +1,6 @@
 import { Zap } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../components/ui/Button";
 import Loader from "../components/ui/Loader";
 import { getTopHeadlines, formatPublishedAt } from "../lib/newsService";
@@ -17,6 +17,7 @@ const HomePage = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const categories = [
     { name: "all", label: "All", icon: null },
@@ -28,6 +29,17 @@ const HomePage = () => {
     { name: "sports", label: "Sports", icon: null },
     { name: "technology", label: "Technology", icon: null }
   ];
+
+  // Parse URL query parameters when component mounts or URL changes
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const categoryParam = queryParams.get('category');
+
+    // If there's a valid category in the URL parameters, set it
+    if (categoryParam && categories.some(cat => cat.name === categoryParam)) {
+      setSelectedCategory(categoryParam);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     // Reset articles when category changes
@@ -84,6 +96,20 @@ const HomePage = () => {
     setLoadingMore(true);
     setPage(prevPage => prevPage + 1);
     // No need to call fetchNews here, the useEffect will handle it
+  };
+
+  // Handle category button clicks
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+
+    // Update URL without reloading the page
+    const searchParams = new URLSearchParams();
+    if (category !== 'all') {
+      searchParams.set('category', category);
+      navigate(`/?${searchParams.toString()}`, { replace: true });
+    } else {
+      navigate('/', { replace: true });
+    }
   };
 
   // Function to get a category badge for an article
@@ -174,23 +200,15 @@ const HomePage = () => {
                 onError={(e) => { e.target.src = DEFAULT_IMAGE }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent p-4 flex flex-col justify-end sm:p-6">
-                <div className="mb-4 space-y-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded bg-red-500 px-2 py-1 text-xs font-medium text-white">
-                      {getCategoryBadge(featuredArticle).label}
+                <div className="flex flex-wrap items-center gap-2 mb-4">
+                  <span className="rounded bg-red-500 px-2 py-1 text-xs font-medium text-white">
+                    {getCategoryBadge(featuredArticle).label}
+                  </span>
+                  {featuredArticle.source?.name && (
+                    <span className="rounded bg-blue-600 px-2 py-1 text-xs font-medium text-white">
+                      {featuredArticle.source.name}
                     </span>
-                    {featuredArticle.source?.name && (
-                      <span className="rounded bg-blue-600 px-2 py-1 text-xs font-medium text-white">
-                        {featuredArticle.source.name}
-                      </span>
-                    )}
-                  </div>
-                  <h2 className="text-xl font-bold text-white sm:text-2xl md:text-3xl">
-                    {featuredArticle.title}
-                  </h2>
-                  <p className="text-sm text-gray-200 md:text-base lg:text-lg">
-                    {featuredArticle.description}
-                  </p>
+                  )}
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-300">
@@ -217,10 +235,10 @@ const HomePage = () => {
                 <button
                   key={category.name}
                   className={`flex whitespace-nowrap items-center gap-1 rounded-md px-4 py-2 font-medium transition-colors ${selectedCategory === category.name
-                      ? "bg-secondary text-foreground"
-                      : "text-muted hover:bg-secondary/50 hover:text-foreground"
+                    ? "bg-secondary text-foreground"
+                    : "text-muted hover:bg-secondary/50 hover:text-foreground"
                     }`}
-                  onClick={() => setSelectedCategory(category.name)}
+                  onClick={() => handleCategoryChange(category.name)}
                 >
                   {category.icon}
                   <span>{category.label}</span>
@@ -269,13 +287,13 @@ const HomePage = () => {
                             {article.description || 'No description available'}
                           </p>
                         </div>
-                        <div className="flex justify-end">
+                        <div className="flex justify-end mt-2">
                           <Button
                             variant="secondary"
                             size="sm"
                             onClick={() => handleReadMore(article, index)}
                           >
-                            Read more
+                            Read Full Story
                           </Button>
                         </div>
                       </div>

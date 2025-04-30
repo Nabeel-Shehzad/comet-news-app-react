@@ -10,9 +10,9 @@ export default defineConfig(({ command }) => {
     }
   };
   
-  // Only use /news/ as base path in production, use / in development
+  // Use root path for the production build since we're deploying to root domain
   if (command === 'build') {
-    config.base = '/news/';
+    config.base = '/';
   }
   
   return config;
