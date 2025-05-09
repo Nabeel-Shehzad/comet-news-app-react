@@ -150,13 +150,16 @@ const PrivacyPolicyPage = () => {
           If you have any questions about this Privacy Policy, the practices of this site, or your dealings with
           this site, please contact us at:
         </p>
-        <div className="text-muted-foreground">
-          <p>Comet News</p>
-          <p>123 News Tower</p>
-          <p>Media District</p>
-          <p>New York, NY 10001</p>
-          <p>Email: privacy@cometnews.ai</p>
-          <p>Phone: +1 (555) 123-4567</p>
+        <div className="text-muted-foreground mb-8">
+          <h3 className="text-xl font-medium mb-3">Get In Touch</h3>
+          <div className="space-y-1">
+            <p><strong>Email:</strong> contact@cometnews.ai</p>
+            <p><strong>Phone:</strong> 347 - 918 - 4292</p>
+            <p><strong>Address:</strong></p>
+            <p>Comet News</p>
+            <p>224 W 35th St Ste 500</p>
+            <p>New York, NY 10001</p>
+          </div>
         </div>
       </section>
     </div>

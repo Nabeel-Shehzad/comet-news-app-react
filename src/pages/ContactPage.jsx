@@ -21,8 +21,8 @@ const ContactPage = () => {
               </div>
               <div>
                 <h3 className="font-medium">Email</h3>
-                <p className="text-muted-foreground">contact@cometnews.ai</p>
-                <p className="text-muted-foreground">tips@cometnews.ai (for news tips)</p>
+                <p className="text-muted-foreground">contact@cometnews.com</p>
+                <p className="text-muted-foreground">tips@cometnews.com (for news tips)</p>
               </div>
             </div>
 
@@ -32,7 +32,7 @@ const ContactPage = () => {
               </div>
               <div>
                 <h3 className="font-medium">Phone</h3>
-                <p className="text-muted-foreground">+1 (555) 123-4567</p>
+                <p className="text-muted-foreground">347 - 918 - 4292</p>
                 <p className="text-muted-foreground">Mon-Fri: 9:00 AM - 5:00 PM EST</p>
               </div>
             </div>
@@ -43,8 +43,8 @@ const ContactPage = () => {
               </div>
               <div>
                 <h3 className="font-medium">Address</h3>
-                <p className="text-muted-foreground">123 News Tower</p>
-                <p className="text-muted-foreground">Media District</p>
+                <p className="text-muted-foreground">Comet News</p>
+                <p className="text-muted-foreground">224 W 35th St Ste 500</p>
                 <p className="text-muted-foreground">New York, NY 10001</p>
               </div>
             </div>
@@ -131,8 +131,8 @@ const ContactPage = () => {
         <h2 className="text-2xl font-semibold mb-6">For Press Inquiries</h2>
         <p className="text-muted-foreground mb-4">
           If you're a member of the press and would like to speak with one of our editors or request
-          an interview, please contact our media relations team at press@cometnews.ai or call our
-          press office at +1 (555) 987-6543.
+          an interview, please contact our media relations team at press@cometnews.com or call our
+          press office at 347 - 918 - 4292.
         </p>
       </section>
     </div>
